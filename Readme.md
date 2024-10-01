@@ -43,8 +43,16 @@ library(SEITRNet)
 The SEITR function defines the SEITR model for network analysis.
 ### SEITR Network Analysis
 The SEITR_network function performs SEITR network analysis.
+```r
+SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10, 
+                          Lambda=1.1, beta1=.8, beta2=.18, beta3=.02, alpha1=.1, alpha2=.055, delta_I=.03, delta_T=.03, mu=.01,
+                          S=85, E=5, I=10, Tt=0, R=0, N=100, t=100, num_exp = 10, verbose = F,
+                          state = NULL, parameters = NULL) {
+  # Function implementation
+}
+```
 ### Compare Experiment Sets
-The compare_experiment_sets function compares the results of multiple experiment sets.
+The compare_experiment_sets function compares the results of multiple experiment sets. Currently inactive.
 
 ## Examples
 Here are some examples of how to use the functions in this project:
@@ -64,9 +72,9 @@ ws_p.9_k20 <- SEITR_network("WS", n_par1=0.9, n_par2=20, num_exp = 3)
 compare_experiment_sets(list(ws_p.1_k20, ws_p.3_k20, ws_p.5_k20, ws_p.9_k20))
 ```
 
-### Contributing
+## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request or open an issue if you have any suggestions or improvements.
 
-### License
+## License
 This project is licensed under the GPL-3 License. See the LICENSE file for details.
 
