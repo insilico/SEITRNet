@@ -25,13 +25,6 @@ SEITR <- function(t, state, parameters) {
   })
 }
 
-out <- NULL
-
-# Helper function to compute the ODE
-compute_ode <- function(state, times, SEITR, parameters) {
-  ode(y = state, times = times, func = SEITR, parms = parameters)
-}
-
 #' SEITR Network Analysis
 #'
 #' This function performs SEITR network analysis.
@@ -62,13 +55,12 @@ compute_ode <- function(state, times, SEITR, parameters) {
 #' @export
 SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10, 
                           Lambda=1.1, beta1=.8, beta2=.18, beta3=.02, alpha1=.1, alpha2=.055, delta_I=.03, delta_T=.03, mu=.01,
-                          S=85, E=5, I=10, Tt=0, R=0, N=n, t=100, num_exp = 10, verbose = F) {
+                          S=85, E=5, I=10, Tt=0, R=0, N=100, t=100, num_exp = 10, verbose = F) {
   times <- seq(0, t, by = 1)
   state <- c(S = S, E = E, I = I, Tt = Tt, R = R, N = N)
   parameters <- c(Lambda = Lambda, beta1 = beta1, beta2 = beta2, beta3 = beta3, alpha1 = alpha1, alpha2 = alpha2, delta_I = delta_I, delta_T = delta_T, mu = mu)
   
-  out <<- compute_ode(state, times, SEITR, parameters)
-  
+  out <- ode(y = state, times = times, func = SEITR, parms = parameters)
   if(verbose){
     par(mfrow = c(3, 2))  # Set up a 3x2 grid for the plots
     plot(out[, "time"], out[, "S"], type = "l", col = 2, xlab = "Time (Days)", ylab = "Susceptibles", main = "Susceptibles")
@@ -440,13 +432,6 @@ SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10,
   return(avgs)
 }
 
-#' Compare Experiment Sets
-#'
-#' This function compares the results of multiple experiment sets.
-#'
-#' @param experiment_sets_list A list of experiment sets to compare
-#' @return A comparison of the experiment sets
-#' @export
 compare_experiment_sets <- function(experiment_sets_list) {
   experiment_names <- sapply(as.list(substitute(experiment_sets_list))[-1], deparse)
   par(mfrow = c(1, 1))
