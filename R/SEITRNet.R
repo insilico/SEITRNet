@@ -27,6 +27,11 @@ SEITR <- function(t, state, parameters) {
 
 out <- NULL
 
+# Helper function to compute the ODE
+compute_ode <- function(state, times, SEITR, parameters) {
+  ode(y = state, times = times, func = SEITR, parms = parameters)
+}
+
 #' SEITR Network Analysis
 #'
 #' This function performs SEITR network analysis.
@@ -62,7 +67,8 @@ SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10,
   state <- c(S = S, E = E, I = I, Tt = Tt, R = R, N = N)
   parameters <- c(Lambda = Lambda, beta1 = beta1, beta2 = beta2, beta3 = beta3, alpha1 = alpha1, alpha2 = alpha2, delta_I = delta_I, delta_T = delta_T, mu = mu)
   
-  out <<- ode(y = state, times = times, func = SEITR, parms = parameters)
+  out <<- compute_ode(state, times, SEITR, parameters)
+  
   if(verbose){
     par(mfrow = c(3, 2))  # Set up a 3x2 grid for the plots
     plot(out[, "time"], out[, "S"], type = "l", col = 2, xlab = "Time (Days)", ylab = "Susceptibles", main = "Susceptibles")
