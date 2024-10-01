@@ -1,0 +1,10 @@
+Package: SEITRNet
+Type: Package
+Title: A Package for SEITR Network Analysis
+Version: 0.1.0
+Author: Selim Karaoglu
+Maintainer: Selim Karaoglu <selim-karaoglu@utulsa.edu>
+Description: This package provides functions for SEITR network analysis and visualization.
+License: GPL-3
+Imports: igraph, deSolve, ggplot2, dplyr
+RoxygenNote: 7.2.3

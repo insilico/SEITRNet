@@ -1,0 +1,7 @@
+export(SEITR)
+export(SEITR_network)
+export(compare_experiment_sets)
+import(igraph)
+import(deSolve)
+import(ggplot2)
+import(dplyr)
