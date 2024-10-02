@@ -45,7 +45,7 @@ The SEITR_network function performs SEITR network analysis.
 
 #### Parameters
 
-
+- n: (int) Number of nodes in the network.
 - network_type: (str) The type of network to create. This can be one of the following:
 
   - ER: Erdős-Renyi random graph
