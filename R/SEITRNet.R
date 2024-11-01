@@ -3,6 +3,8 @@ library(igraph)  # For network analysis and visualization
 library(deSolve)  # For solving differential equations
 library(ggplot2)
 library(dplyr)
+library(foreach)
+library(doParallel)
 
 #' SEITR Model
 #'
@@ -70,9 +72,11 @@ SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10,
     plot(out[, "time"], out[, "R"], type = "l", col = 6, xlab = "Time (Days)", ylab = "Recovered", main = "Recovered")
     plot(out[, "time"], out[, "N"], type = "l", col = 7, xlab = "Time (Days)", ylab = "Total Population", main = "Total Population")
   }
-  status_counts_list <- vector("list", num_exp)
   
-  for (exp in 1:num_exp) {
+  cl <- makeCluster(detectCores() - 1)  # Use one less than the number of available cores
+  registerDoParallel(cl)
+  
+  status_counts_list <- foreach(exp = 1:num_exp, .packages = c("igraph", "deSolve")) %dopar% {
     if(network_type == "ER"){
       init_p <- n_par1  # The probability of creating an edge between any two nodes
       g <- erdos.renyi.game(n=N, p = init_p)  # Create the graph
@@ -359,33 +363,11 @@ SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10,
       plot(times, largest_comp_size, type = "l", xlab = "Time (Days)", ylab = "Size of Largest Component", main = "Size of Largest Component")
     
     
-      df_ode <- data.frame(time = out[, "time"], S = out[, "S"], E = out[, "E"], I = out[, "I"], 
-                           Tt = out[, "Tt"], R = out[, "R"], N = out[, "N"], type = "ODE")
-      df_net <- data.frame(time = times, S = S_count, E = E_count, I = I_count, Tt = Tt_count, 
-                           R = R_count, N = N_count, type = "Network")
-      df <- rbind(df_ode, df_net)
-      df_long <- tidyr::pivot_longer(df, -c(time, type), names_to = "status", values_to = "count")
-      peaks <- df_long %>%
-        group_by(status, type) %>%
-        slice(which.max(count)) %>%
-        ungroup() %>%
-        mutate(label = paste0("(", round(time, 1), ", ", round(count, 1), ")"))
-      network_colors <- c("S" = "gray", "E" = "orange", "I" = "red", "Tt" = "green", "R" = "purple", "N" = "blue")
-      
-      ggplot(df_long, aes(x = time, y = count)) +
-        geom_line(data = df_long[df_long$type == "ODE", ], aes(color = type)) +
-        geom_line(data = df_long[df_long$type == "Network", ], aes(color = status), linewidth = 1.1) +
-        geom_point(data = peaks, aes(fill = type, color = NULL), size = 3, shape = 21) +
-        geom_text(data = peaks, aes(label = label), vjust = -1) +
-        scale_color_manual(values = c("ODE" = "black", network_colors)) +
-        scale_fill_manual(values = c("ODE" = "white", "Network" = network_colors), guide = "none") +
-        labs(x = "Time", y = "Count") +
-        facet_wrap(~ factor(status, levels = c("S", "E", "I", "Tt", "R", "N")), scales = "free_y", ncol = 2) +
-        theme_minimal() +
-        expand_limits(y = max(df_long$count) * .4) # Expand y-axis limits
+     
     }
-    status_counts_list[[exp]] <- status_counts
+    status_counts
   }
+  stopCluster(cl) 
   par(mfrow = c(3, 2))
   statuses <- c("S", "E", "I", "Tt", "R", "N")
   colors <- c("gray", "orange", "red", "green", "purple", "blue")
@@ -430,8 +412,8 @@ SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10,
     text(times[lowest_peak], avg_values[lowest_peak], labels = paste("(", round(times[lowest_peak], 1), ", ", round(avg_values[lowest_peak], 1), ")", sep = ""), pos = 3, col = "black")
 
     if(verbose){
-      cat(paste("Length of avg_values:", length(avg_values), "\n"))
-      cat(paste("Length of out[, statuses[j]]:", length(out[, statuses[j]]), "\n"))
+      #cat(paste("Length of avg_values:", length(avg_values), "\n"))
+      #cat(paste("Length of out[, statuses[j]]:", length(out[, statuses[j]]), "\n"))
       # Calculate the measures of similarity
       msd <- mean((avg_values - out[-nrow(out), statuses[j]])^2)
 
