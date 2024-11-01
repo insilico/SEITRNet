@@ -429,6 +429,18 @@ SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10,
     points(times[lowest_peak], avg_values[lowest_peak], pch = 19, col = colors[j])
     text(times[lowest_peak], avg_values[lowest_peak], labels = paste("(", round(times[lowest_peak], 1), ", ", round(avg_values[lowest_peak], 1), ")", sep = ""), pos = 3, col = "black")
   }
+  if(verbose){
+    # Calculate the measures of similarity
+    msd <- mean((avg_values - out[, statuses[j]])^2)
+    rmsd <- sqrt(msd)
+    correlation <- cor(avg_values, out[, statuses[j]])
+
+    # Print the results
+    cat(paste("Status:", statuses[j], "\n"))
+    cat(paste("MSD:", msd, "\n"))
+    cat(paste("RMSD:", rmsd, "\n"))
+    cat(paste("Correlation:", correlation, "\n"))
+  }
   return(avgs)
 }
 
