@@ -73,7 +73,7 @@ SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10,
     plot(out[, "time"], out[, "N"], type = "l", col = 7, xlab = "Time (Days)", ylab = "Total Population", main = "Total Population")
   }
   
-  cl <- makeCluster(detectCores() - 1)  # Use one less than the number of available cores
+  cl <- makeCluster(8)  # Use one less than the number of available cores
   registerDoParallel(cl)
   
   status_counts_list <- foreach(exp = 1:num_exp, .packages = c("igraph", "deSolve")) %dopar% {
