@@ -433,7 +433,8 @@ SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10,
       cat(paste("Length of avg_values:", length(avg_values), "\n"))
       cat(paste("Length of out[, statuses[j]]:", length(out[, statuses[j]]), "\n"))
       # Calculate the measures of similarity
-      msd <- mean((avg_values - out[, statuses[j]])^2)
+      msd <- mean((avg_values - out[-nrow(out), statuses[j]])^2)
+
       rmsd <- sqrt(msd)
       #correlation <- cor(avg_values, out[, statuses[j]])
 
