@@ -430,6 +430,8 @@ SEITR_network <- function(network_type="ER", n=100, n_par1=.9, n_par2=10,
     text(times[lowest_peak], avg_values[lowest_peak], labels = paste("(", round(times[lowest_peak], 1), ", ", round(avg_values[lowest_peak], 1), ")", sep = ""), pos = 3, col = "black")
 
     if(verbose){
+      cat(paste("Length of avg_values:", length(avg_values), "\n"))
+      cat(paste("Length of out[, statuses[j]]:", length(out[, statuses[j]]), "\n"))
       # Calculate the measures of similarity
       msd <- mean((avg_values - out[, statuses[j]])^2)
       rmsd <- sqrt(msd)
