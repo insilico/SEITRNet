@@ -30,7 +30,7 @@ install.packages("devtools")
 ```
 Then, use the ```install_github``` function to install the package:
 ```r
-devtools::install_github("skaraoglu/SEITRNet")
+devtools::install_github("insilico/SEITRNet")
 ```
 ### Loading the Package
 After installing the package, you can load it using the library function:
